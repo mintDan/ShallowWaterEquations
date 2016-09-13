@@ -52,26 +52,10 @@ ax.set_title('Shallow Water n = 0')
 ax.set_ylabel('y [m]')
 ax.set_xlabel('x [m]')
 ax.set_zlim(dat.min(),dat.max())
-#ax.xaxis.set_ticks(0,Lx,4)
-#ax.xaxis.set_major_formatter(ticker.FormatStrFormatter('%5.1f'))
 ax.plot_surface(X, Y, dat[0], rstride=10, cstride=10)
 
 #line, = ax.plot_surface(X, Y, dat[0], rstride=2, cstride=2)
 
-
-
-#contour ,cmap='jet'.... 
-#pcolor looks like matlab equilevant contour
-#http://matplotlib.org/examples/images_contours_and_fields/contourf_log.html
-#This also looks close to Matlab
-#http://stackoverflow.com/questions/15601096/contour-graph-in-python
-#http://matplotlib.org/examples/pylab_examples/contourf_demo.html
-
-# plt.pcolor(X,Y,dat[0],cmap='jet')
-# plt.hold(False)
-# plt.xlabel('x [m]')
-# plt.ylabel('y [m]')
-# plt.colorbar()
 def animate(i): #i increment with 1 each step
 	ax.clear()
 	ax.set_zlim(dat.min(),dat.max())
@@ -83,24 +67,11 @@ def animate(i): #i increment with 1 each step
 	Z = dat[i]
 	#ax.plot_surface(X, Y, bottomtopo, rstride=2, cstride=2, alpha=0.3)
 	line = ax.plot_surface(X, Y, dat[i], rstride=10, cstride=10)
-	#plot=plt.contour(X,Y,dat[i],3,cmap='jet')
-	#plt.pcolor(X,Y,dat[i],cmap='jet')
+	if i == 16:
+		fig.savefig('SW2D.png', bbox_inches='tight')
+	
 	return line,
 anim = animation.FuncAnimation(fig,animate, frames = nstop, interval=500)#,blit=False)
 
 plt.show()
 
-#figure(1)
-#for n in range(nt-1):
-	#plt.plot(x,h[n,nhalo:nx+nhalo],'blue')
-	#plt.show()
-#figure(1)
-#plt.ion()
-# for n in range(nt-1):
-	#ax.clear()
-	# ax.clear()
-	# plt.plot(x,y+n)
-	# plt.draw()
-	# plt.show()
-	#plt.close()
-#plt.show()

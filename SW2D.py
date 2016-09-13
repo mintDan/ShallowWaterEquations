@@ -411,7 +411,7 @@ ymax = xmax
 Ly = ymax-ymin
 dy = Ly/ny
 H0 = 4000.0
-nstop = 10
+nstop = 30
 u0 = 10.0 #30
 v0 = u0
 g = 9.82
@@ -826,13 +826,13 @@ for n in range(int(nstop)): #int(nstop)
 	
 	#Advection of d field
 	#bicubic(a,b,p,q,d[2,:,:],d[n2,:,:])
-	#bicubicvec(a,b,p,q,d[2,:,:],d[n2,:,:])
+	bicubicvec(a,b,p,q,d[2,:,:],d[n2,:,:])
 
 	#update height
 
 	#LMCSL, from n1 to n2.
 	#bicubicLMCSL(a,b,p,q,Cupx[ns1,:,:],Cupy[ns1,:,:],d[n1,:,:],d[n2,:,:],a0,w)
-	bicubicLMCSLvec(a,b,p,q,Cupx[ns1,:,:],Cupy[ns1,:,:],d[n1,:,:],d[n2,:,:])
+	#bicubicLMCSLvec(a,b,p,q,Cupx[ns1,:,:],Cupy[ns1,:,:],d[n1,:,:],d[n2,:,:])
 	#update height
 	h[n2,:,:] = d[n2,:,:]+hs
 
