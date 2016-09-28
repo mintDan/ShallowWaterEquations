@@ -42,7 +42,18 @@ X,Y = meshgrid(X,Y)
 dat=dat.reshape(nstop,nx,ny)
 
 
-fig = plt.figure() #If i do pcolor, then no need for 3d projection
+fig2 = plt.figure(2)
+ax2 = fig2.gca(projection='3d')
+ax2.set_ylim(0,Ly)
+ax2.set_xlim(0,Lx)
+ax2.set_xlabel('x [m]')
+ax2.set_ylabel('y [m]')
+ax2.set_title('Bottom topography')
+ax2.plot_surface(X, Y, bottomtopo, cmap = 'terrain')#rstride=10, cstride=10)
+fig2.savefig('bottomtopog.png', bbox_inches='tight')
+
+
+fig = plt.figure(1) #If i do pcolor, then no need for 3d projection
 ax = fig.gca(projection='3d')
 #ax = fig.add_subplot(111,projection='3d')
 
@@ -66,7 +77,7 @@ def animate(i): #i increment with 1 each step
 	#ax.xaxis.set_major_formatter(ticker.FormatStrFormatter('%5.1f'))
 	Z = dat[i]
 	#ax.plot_surface(X, Y, bottomtopo, rstride=2, cstride=2, alpha=0.3)
-	line = ax.plot_surface(X, Y, dat[i], rstride=10, cstride=10)
+	line = ax.plot_surface(X, Y, dat[i],rstride=10, cstride=10)
 	if i == 16:
 		fig.savefig('SW2D.png', bbox_inches='tight')
 	
