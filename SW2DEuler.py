@@ -51,7 +51,7 @@ ymax = xmax
 Ly = ymax-ymin
 dy = Ly/(ny-1)
 H0 = 4000.0
-nstop = 600
+nstop = 1000
 u0 = 2 #30
 v0 = u0
 g = 9.82
@@ -106,20 +106,30 @@ fig = plt.figure() #If i do pcolor, then no need for 3d projection
 ax = fig.gca(projection='3d')
 #ax = fig.add_subplot(111,projection='3d')
 
-ax.set_xlim(0,Lx)
-ax.set_ylim(0,Ly)
-ax.set_title('Shallow Water n = 0')
-ax.set_ylabel('y [m]')
-ax.set_xlabel('x [m]')
+#ax.set_xlim(0,Lx)
+#ax.set_ylim(0,Ly)
+#ax.set_title('Shallow Water n = 0')
+#ax.set_ylabel('y [m]')
+#ax.set_xlabel('x [m]')
 ax.set_zlim(3999,4001)
 ax.plot_surface(x, y, h[nhalo:nx+nhalo,nhalo:nx+nhalo], rstride=10, cstride=10)
+ax.axis('off')
 
 
 
 
 
 def animate(i): #i increment with 1 each step
+
+	"""The integration is done in the animate function.
+	Uses global variables and arrays, would love to change it"""
 	global u, v, h, h2, u2, v2 
+
+	maxvalu = absolute(u[nhalo:nx+nhalo,nhalo:nx+nhalo]).max()
+	maxvalv = absolute(v[nhalo:nx+nhalo,nhalo:nx+nhalo]).max()
+	maxvalcg = sqrt(g*h[nhalo:nx+nhalo,nhalo:nx+nhalo].max())
+	tau = factor*(1.0/sqrt(2.0))*dx/(sqrt(maxvalu**2+maxvalv**2)+cg)
+
 	#forward velocity
 	u2[ix,jy] = u[ix,jy]-tau*(u[ix,jy]*(u[ix+1,jy]-u[ix-1,jy])/(2.0*dx) \
 					+v[ix,jy]*(u[ix,jy+1]-u[ix,jy-1])/(2.0*dy)) \
@@ -139,9 +149,10 @@ def animate(i): #i increment with 1 each step
 	haloval(h2[:,:])
 
 	ax.clear()
-	ax.set_title('Shallow Water n = {0:3.0f}'.format(i))
-	ax.set_ylabel('y [m]')
-	ax.set_xlabel('x [m]')
+	ax.axis('off')
+	#ax.set_title('Shallow Water n = {0:3.0f}'.format(i))
+	#ax.set_ylabel('y [m]')
+	#ax.set_xlabel('x [m]')
 	ax.set_zlim(3999,4001)
 
 	line = ax.plot_surface(x, y, h2[nhalo:nx+nhalo,nhalo:nx+nhalo], rstride=10, cstride=10)
@@ -151,6 +162,6 @@ def animate(i): #i increment with 1 each step
 	v = v2
 	return line
 
-anim = animation.FuncAnimation(fig, animate, frames = nstop, interval=4)#,blit=False)
+anim = animation.FuncAnimation(fig, animate, frames = nstop, interval=1)#,blit=False)
 plt.show()
 
