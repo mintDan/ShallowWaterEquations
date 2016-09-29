@@ -98,38 +98,6 @@ haloval(h[:,:])
 
 
 
-def step(h,u,v):
-	#updating short timestep tau, based on u,v and h.
-	#Updating tau, of course if u,v becomes negative, then we want .min()
-	#so need to fix this, for peculiar cases.
-	maxvalu = absolute(u[nhalo:nx+nhalo,nhalo:nx+nhalo]).max()
-	maxvalv = absolute(v[nhalo:nx+nhalo,nhalo:nx+nhalo]).max()
-	maxvalcg = sqrt(g*h[nhalo:nx+nhalo,nhalo:nx+nhalo].max())
-	tau = factor*(1.0/sqrt(2.0))*dx/(sqrt(maxvalu**2+maxvalv**2)+cg)
-	
-	
-	#Should see if matrix multiplication is faster than all this?
-	#And maybe write u,v better, and maybe, make a single .array...
-	#forward velocity
-	u[ix,jy] = u[ix,jy]-tau*(u[ix,jy]*(u[ix+1,jy]-u[ix-1,jy])/(2.0*dx) \
-					+v[ix,jy]*(u[ix,jy+1]-u[ix,jy-1])/(2.0*dy)) \
-					-tau*g*(h[ix+1,jy]-h[ix-1,jy])/(2.0*dx)
-	#You could make v backward too like h, maybe? so only u forward?
-	v[ix,jy] = v[ix,jy]-tau*(u[ix,jy]*(v[ix+1,jy]-v[ix-1,jy])/(2.0*dx) \
-					+v[ix,jy]*(v[ix,jy+1]-v[ix,jy-1])/(2.0*dy)) \
-					-tau*g*(h[ix,jy+1]-h[ix,jy-1])/(2.0*dy)
-	
-	#backward, newly updated velocities
-	h[ix,jy] = h[ix,jy]-tau*u[ix,jy]*(h[ix+1,jy]-h[ix-1,jy])/(2.0*dx) \
-					-tau*v[ix,jy]*(h[ix,jy+1]-h[ix,jy-1])/(2.0*dy)\
-					-tau*h[ix,jy]*((u[ix+1,jy]-u[ix-1,jy])/(2.0*dx)+(v[ix,jy+1]-v[ix,jy-1])/(2.0*dy))
-	#Should change h to d, but maybe not all places...
-	
-	haloval(u[:,:])
-	haloval(v[:,:])
-	haloval(h[:,:])
-
-	return h,u,v
 
 print('runtime = {0:4.2f}'.format(time.process_time()-start_time))
 
@@ -143,44 +111,46 @@ ax.set_ylim(0,Ly)
 ax.set_title('Shallow Water n = 0')
 ax.set_ylabel('y [m]')
 ax.set_xlabel('x [m]')
-ax.set_zlim(h.min(),h.max())
-#ax.xaxis.set_ticks(0,Lx,4)
-#ax.xaxis.set_major_formatter(ticker.FormatStrFormatter('%5.1f'))
+ax.set_zlim(3999,4001)
 ax.plot_surface(x, y, h[nhalo:nx+nhalo,nhalo:nx+nhalo], rstride=10, cstride=10)
 
-#line, = ax.plot_surface(X, Y, dat[0], rstride=2, cstride=2)
 
 
 
-#contour ,cmap='jet'.... 
-#pcolor looks like matlab equilevant contour
-#http://matplotlib.org/examples/images_contours_and_fields/contourf_log.html
-#This also looks close to Matlab
-#http://stackoverflow.com/questions/15601096/contour-graph-in-python
-#http://matplotlib.org/examples/pylab_examples/contourf_demo.html
 
-# plt.pcolor(X,Y,dat[0],cmap='jet')
-# plt.hold(False)
-# plt.xlabel('x [m]')
-# plt.ylabel('y [m]')
-# plt.colorbar()
-def animate(h,u,v,h2,u2,v2): #i increment with 1 each step
-	h2,u2,v2 = step(h,u,v)
+def animate(i): #i increment with 1 each step
+	global u, v, h, h2, u2, v2 
+	#forward velocity
+	u2[ix,jy] = u[ix,jy]-tau*(u[ix,jy]*(u[ix+1,jy]-u[ix-1,jy])/(2.0*dx) \
+					+v[ix,jy]*(u[ix,jy+1]-u[ix,jy-1])/(2.0*dy)) \
+					-tau*g*(h[ix+1,jy]-h[ix-1,jy])/(2.0*dx)
+	#You could make v backward too like h, maybe? so only u forward?
+	v2[ix,jy] = v[ix,jy]-tau*(u[ix,jy]*(v[ix+1,jy]-v[ix-1,jy])/(2.0*dx) \
+					+v[ix,jy]*(v[ix,jy+1]-v[ix,jy-1])/(2.0*dy)) \
+					-tau*g*(h[ix,jy+1]-h[ix,jy-1])/(2.0*dy)
+	
+	#backward, newly updated velocities
+	h2[ix,jy] = h[ix,jy]-tau*u[ix,jy]*(h[ix+1,jy]-h[ix-1,jy])/(2.0*dx) \
+					-tau*v[ix,jy]*(h[ix,jy+1]-h[ix,jy-1])/(2.0*dy)\
+					-tau*h[ix,jy]*((u[ix+1,jy]-u[ix-1,jy])/(2.0*dx)+(v[ix,jy+1]-v[ix,jy-1])/(2.0*dy))
+	
+	haloval(u2[:,:])
+	haloval(v2[:,:])
+	haloval(h2[:,:])
+
 	ax.clear()
-	#ax.set_zlim(h[i,nhalo:nx+nhalo,nhalo:nx+nhalo].min(),dat.max())
 	ax.set_title('Shallow Water n = {0:3.0f}'.format(i))
 	ax.set_ylabel('y [m]')
 	ax.set_xlabel('x [m]')
-	ax.set_zlim(h.min(),h.max())
-	#ax.plot_surface(X, Y, bottomtopo, rstride=2, cstride=2, alpha=0.3)
-	line = ax.plot_surface(x, y, h[nhalo:nx+nhalo,nhalo:nx+nhalo], rstride=10, cstride=10)
-	#plot=plt.contour(X,Y,dat[i],3,cmap='jet')
-	#plt.pcolor(X,Y,dat[i],cmap='jet')
+	ax.set_zlim(3999,4001)
+
+	line = ax.plot_surface(x, y, h2[nhalo:nx+nhalo,nhalo:nx+nhalo], rstride=10, cstride=10)
+
 	h = h2
 	u = u2
 	v = v2
-	return line,
+	return line
 
-anim = animation.FuncAnimation(fig,animate(h,u,v,h2,u2,v2), frames = nstop, interval=4)#,blit=False)
+anim = animation.FuncAnimation(fig, animate, frames = nstop, interval=4)#,blit=False)
 plt.show()
 
