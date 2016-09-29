@@ -232,16 +232,7 @@ def bicubicLMCSLvec(a,b,p,q,Cupx,Cupy,arr,arr2):
 	mass[nhalo:2*nhalo,nx:nx+nhalo] = mass[nhalo:2*nhalo,nx:nx+nhalo] + mass[nx+nhalo:nx+2*nhalo,0:nhalo]
 	mass[nhalo:2*nhalo,nhalo:2*nhalo] = mass[nhalo:2*nhalo,nhalo:2*nhalo] + mass[nx+nhalo:nx+2*nhalo,nx+nhalo:nx+2*nhalo]
 	
-	
-	#fortran
-	# mass(1:nhalo,:)=mass(1:nhalo,:)+mass(numx+1:numx+nhalo,:)
-	# mass(numx+1-nhalo:numx,:) = mass(numx+1-nhalo:numx,:)+mass(1-nhalo:0,:)
 
-	# mass(:,1:nhalo)=mass(:,1:nhalo)+mass(:,numx+1:numx+nhalo)
-	# mass(:,numx+1-nhalo:numx) = mass(:,numx+1-nhalo:numx)+mass(:,1-nhalo:0)
-
-	# #Ohhh... ix wonder.... Do ix need to do also corners here??? CHECK!!!!
-	# #CHECK FOR CORNERS.... CONCEPT
 
 	# #W weixght
 	w[nhalo:nx+nhalo,nhalo:nx+nhalo] = 1.0/mass[nhalo:nx+nhalo,nhalo:nx+nhalo]
@@ -405,11 +396,11 @@ nhalo = 10												#gridpoints to make grid periodic
 xmin = 0.0
 xmax = 1000000.0
 Lx = xmax-xmin
-dx = Lx/nx
+dx = Lx/(nx-1)
 ymin = xmin
 ymax = xmax
 Ly = ymax-ymin
-dy = Ly/ny
+dy = Ly/(ny-1)
 H0 = 4000.0
 nstop = 30
 u0 = 10.0 #30
