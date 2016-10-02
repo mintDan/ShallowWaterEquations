@@ -20,8 +20,6 @@ start_time = time.process_time()
 #alternatively, i windows powershell, Measure-Command {ipython SW.py}
 
 
-
-
 def haloval(arr):
 		#Sides		
 		arr[0:nhalo,:] = arr[nx:nx+nhalo,:]
@@ -36,8 +34,10 @@ def haloval(arr):
 
 		arr[nx+nhalo:nx+2*nhalo,nx+nhalo:nx+2*nhalo] = arr[nhalo:2*nhalo,nhalo:2*nhalo]
 		arr[nx+nhalo:nx+2*nhalo,0:nhalo] = arr[nhalo:2*nhalo,nx:nx+nhalo]
+		return
+
 		
-		return 
+
 		
 nx = 128												#gridpoints x
 ny = nx													#gridpoints y
@@ -95,7 +95,6 @@ jy = jj[nhalo:nx+nhalo,nhalo:nx+nhalo]
 #Initial h field
 h[ix,jy] = H0+1.0*exp(-(ix-nx/2)**2/(nx/3)-(jy-ny/2)**2/(ny/3)) #Gauss wave
 haloval(h[:,:])
-
 
 
 
