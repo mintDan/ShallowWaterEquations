@@ -43,8 +43,7 @@ datatype=float64
 h = zeros((ny,nx),dtype=datatype) #height field
 h2 = zeros((ny,nx),dtype=datatype)
 box = zeros((30,30),dtype=datatype)
-box = box+3999.8
-box[1:-2,1:-2] = 4001
+
 
 u = zeros((ny,nx),dtype=datatype) #horizontal velocity
 u = array(u+u0)
@@ -103,22 +102,8 @@ ax = fig.gca(projection='3d')
 #ax.set_xlabel('x [m]')
 ax.set_zlim(3999,4001)
 ax.plot_surface(x, y, h, rstride=10, cstride=10)
-#ax.plot_surface(x[60:70,60:70], y[60:70,60:70], box, color='black')
 ax.axis('off')
 
-
-#we will add a box, it will have 30,30 shape...
-#thta means, h(30,30) = 3999
-
-#So, you add boundary conditions at the box sides
-testa = zeros((10,10))
-for j in range(10):
-	for i in range(10):
-		testa[j,i] = i
-print(testa)
-print(testa[0:5,0:5])
-#So, h[50:80] will be [50..79]
-#so, h[49] = h[48]
 
 
 def animate(i): #i increment with 1 each step
@@ -177,9 +162,7 @@ def animate(i): #i increment with 1 each step
 	v2[:,0] = 0
 	v2[:,-1] = 0
 
-	#Box boundary conditions
-	u2[49:82,49:82] = 0
-	v2[49:82,49:82] = 0
+
 	#Should include, 49, and 81, right? To go to the actual water edges
 	#there, 49 to 82
 
@@ -203,15 +186,6 @@ def animate(i): #i increment with 1 each step
 	h2[:,0] = h2[:,1]  #zero pressure differential at left boundary
 	h2[-1,:] = h2[-2,:] #zero pressure on that boundary, water does not push into it??
 
-	#box boundary conditions
-	h2[50:80,50:80] = 4000 #box
-
-	h2[49:82,49] = h2[49:82,48]
-	h2[49:82,81] = h2[49:82,82]	
-	h2[49,49:82] = h2[48,49:82]			
-	h2[81,49:82] = h2[82,49:82]
-
-
 
 	ax.clear()
 	ax.axis('off')
@@ -219,15 +193,14 @@ def animate(i): #i increment with 1 each step
 	#ax.set_ylabel('y [m]')
 	#ax.set_xlabel('x [m]')
 	ax.set_zlim(3999,4001)
-	#ax.plot_surface(x[60:70,60:70], y[60:70,60:70], box, color='black')
-	line2 = ax.plot_surface(x[50:80,50:80], y[50:80,50:80], box, rstride=3, cstride=3, color='black')
+	
 	line = ax.plot_surface(x, y, h2, rstride=10, cstride=10)
 	
 	h = h2
 	u = u2
 	v = v2
 
-	return line2, line
+	return line
 
 anim = animation.FuncAnimation(fig, animate, frames = nstop, interval=0.5)#,blit=False)
 plt.show()
