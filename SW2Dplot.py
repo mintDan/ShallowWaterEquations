@@ -46,11 +46,13 @@ fig2 = plt.figure(2)
 ax2 = fig2.gca(projection='3d')
 ax2.set_ylim(0,Ly)
 ax2.set_xlim(0,Lx)
-ax2.set_xlabel('x [m]')
-ax2.set_ylabel('y [m]')
+ax2.set_xlabel('x [km]')
+ax2.set_ylabel('y [km]')
 ax2.set_title('Bottom topography')
+plt.xticks(linspace(0, Lx, 4),(1/(4*1000))*np.array([0,Lx,Lx*2,Lx*3],dtype=int))
+plt.yticks(linspace(0, Ly, 4),(1/(4*1000))*np.array([0,Ly,Ly*2,Ly*3],dtype=int))
 ax2.plot_surface(X, Y, bottomtopo, cmap = 'terrain')#rstride=10, cstride=10)
-fig2.savefig('bottomtopog.png', bbox_inches='tight')
+fig2.savefig('figs/bottomtopog.png', bbox_inches='tight')
 
 
 fig = plt.figure(1) #If i do pcolor, then no need for 3d projection
@@ -71,15 +73,17 @@ def animate(i): #i increment with 1 each step
 	ax.clear()
 	ax.set_zlim(dat.min(),dat.max())
 	ax.set_title('Shallow Water n = {0:3.0f}'.format(i))
-	ax.set_ylabel('y [m]')
-	ax.set_xlabel('x [m]')
+	ax.set_ylabel('y [km]')
+	ax.set_xlabel('x [km]')
 	ax.set_zlim(dat.min(),dat.max())
+	plt.xticks(linspace(0, Lx, 4),(1/(4*1000))*np.array([0,Lx,Lx*2,Lx*3],dtype=int))
+	plt.yticks(linspace(0, Ly, 4),(1/(4*1000))*np.array([0,Ly,Ly*2,Ly*3],dtype=int))
 	#ax.xaxis.set_major_formatter(ticker.FormatStrFormatter('%5.1f'))
 	Z = dat[i]
 	#ax.plot_surface(X, Y, bottomtopo, rstride=2, cstride=2, alpha=0.3)
 	line = ax.plot_surface(X, Y, dat[i],rstride=10, cstride=10)
 	if i == 16:
-		fig.savefig('SW2D.png', bbox_inches='tight')
+		fig.savefig('figs/SW2D.png', bbox_inches='tight')
 	
 	return line,
 anim = animation.FuncAnimation(fig,animate, frames = nstop, interval=500)#,blit=False)
